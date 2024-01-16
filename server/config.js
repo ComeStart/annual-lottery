@@ -105,7 +105,7 @@ const prizes = [
  * 一次抽取的奖品个数与prizes对应
  */
 // const EACH_COUNT = [1, 1, 5, 6, 7, 8, 9, 10];
-const EACH_COUNT = [1, 1, 2, [6, 6, 3, 3], 5];
+const EACH_COUNT = [1, 1, 2, [6, 6, 3, 3], 1];
 
 
 /**
@@ -116,11 +116,23 @@ const COMPANY = "MoShang";
 const AUTH_INFO = {
   name: "admin",
   password: "123456"
-}
+};
+
+
+const feishuData = JSON.stringify({
+  "app_id": "cli_a51c367af874500b",
+  "app_secret": "lDXIXjo8XQF1OaIyc4pkFgrvI6j6eWsR"
+});
+
+const appToken = "TyRMbvAqqavbKss4Mw1cTKXAnOe";
+const tableId = "tbl5hprpF2NKR53t";
 
 module.exports = {
   prizes,
   EACH_COUNT,
   COMPANY,
-  AUTH_INFO
+  AUTH_INFO,
+  feishuData,
+  appToken,
+  tableId
 };

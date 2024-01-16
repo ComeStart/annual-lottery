@@ -9,7 +9,7 @@
     "deploy": "cd dist && pm2 start ../../server/index.js -p 8080",
     "redeploy": "pm2 restart index",
     "build": "webpack --mode=production --progress --colors",
-    "dev": "webpack-dev-server --config webpack.dev.js --mode=development --progress --colors"
+    "dev": "set NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server --config webpack.dev.js --mode=development --progress --colors "
   },
   "author": "moshang",
   "license": "ISC",

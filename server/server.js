@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const chokidar = require("chokidar");
 const cfg = require("./config");
+const axios = require('axios');
+
 
 const {
   loadXML,
@@ -92,13 +94,14 @@ router.post("/login", (req, res, next) => {
   }
 });
 
-// 获取所有用户
+// 清空已抽奖数据，并重设抽奖人员名单
 router.post("/reset", (req, res, next) => {
   luckyData = {};
   errorData = [];
   log(`重置数据成功`);
   saveErrorDataFile(errorData);
   return saveDataFile(luckyData).then(data => {
+    loadData();
     res.json({
       type: "success"
     });
@@ -226,19 +229,78 @@ function loadData() {
   let cfgData = {};
 
   // curData.users = loadXML(path.join(cwd, "data/users.xlsx"));
-  curData.users = loadXML(path.join(dataBath, "data/users.xlsx"));
-  // 重新洗牌
-  shuffle(curData.users);
+  // curData.users = loadXML(path.join(dataBath, "data/users.xlsx"));
+  loadFeishu().then(outData => {
+    // 处理 outData
+    curData.users = outData;
+    // console.log(curData.users);
+    // 重新洗牌
+    shuffle(curData.users);
+  
+    // 读取已经抽取的结果
+    loadTempData()
+      .then(data => {
+        luckyData = data[0];
+        errorData = data[1];
+      })
+      .catch(data => {
+        curData.leftUsers = Object.assign([], curData.users);
+      });
+  }).catch(error => {
+    // 处理错误
+    console.error(error);
+  });
+}
 
-  // 读取已经抽取的结果
-  loadTempData()
-    .then(data => {
-      luckyData = data[0];
-      errorData = data[1];
-    })
-    .catch(data => {
-      curData.leftUsers = Object.assign([], curData.users);
+async function loadFeishu() {
+  let outData = [];
+
+  try {
+    console.log("获取飞书token")
+    let config = {
+      method: 'POST',
+      url: 'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data : cfg.feishuData
+    };
+    let response = await axios(config);
+    // 提取 tenant_access_token
+    let feishuToken = response.data.tenant_access_token;
+    console.log("获取飞书token成功: " + feishuToken);
+
+    console.log("获取飞书用户数据");
+    config = {
+      method: 'GET',
+      url: `https://open.feishu.cn/open-apis/bitable/v1/apps/${cfg.appToken}/tables/${cfg.tableId}/records?page_size=1000`,
+      headers: {
+        'Authorization': `Bearer ${feishuToken}`
+      }
+    };
+
+    response = await axios(config);
+    console.log("获取飞书用户数据成功");
+    // console.log(JSON.stringify(response.data));
+
+    // 提取所需信息
+    outData = response.data.data.items.map(item => {
+      return [
+          item.fields.编号,
+          item.fields.提交人.name,
+          '数据驱动中心',
+          // item.fields['请上传头像'].length > 0 ? item.fields['请上传头像'][0].url : '无',
+          item.fields.提交人.avatar_url,
+          item.fields['请写下你的新年口号（20字以内）']
+      ];
     });
+
+    // console.log(outData);
+  } catch (error) {
+    console.log(error);
+  }
+
+  return outData;
 }
 
 function getLeftUsers() {
