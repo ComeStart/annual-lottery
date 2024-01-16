@@ -748,7 +748,9 @@ function random(num) {
  */
 function changeCard(cardIndex, user) {
   let card = threeDCards[cardIndex].element;
-  let avatorUrl = user[3] ? user[3] : "../img/avator.webp";
+  const fullImageUrl = window.location.origin + user[3]; // 拼接完整的图片 URL
+  console.log("full image url is " + fullImageUrl);
+  let avatorUrl = user[3] ? fullImageUrl : "../img/avator.webp";
   let greeting = "";
   greeting = user[4] && user[4].length > 20 ? user[4].slice(0, 20) + "..." : user[4];
   card.innerHTML = `<div class="avator"><img src="${avatorUrl}" /></div><div class="name">${user[1]

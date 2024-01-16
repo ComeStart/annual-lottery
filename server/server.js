@@ -5,6 +5,8 @@ const path = require("path");
 const chokidar = require("chokidar");
 const cfg = require("./config");
 const axios = require('axios');
+const fs = require('fs');
+const sharp = require('sharp');
 
 
 const {
@@ -233,7 +235,6 @@ function loadData() {
   loadFeishu().then(outData => {
     // 处理 outData
     curData.users = outData;
-    // console.log(curData.users);
     // 重新洗牌
     shuffle(curData.users);
   
@@ -284,22 +285,57 @@ async function loadFeishu() {
     // console.log(JSON.stringify(response.data));
 
     // 提取所需信息
-    outData = response.data.data.items.map(item => {
-      return [
-          item.fields.编号,
-          item.fields.提交人.name,
-          '数据驱动中心',
-          // item.fields['请上传头像'].length > 0 ? item.fields['请上传头像'][0].url : '无',
-          item.fields.提交人.avatar_url,
-          item.fields['请写下你的新年口号（20字以内）']
-      ];
-    });
+    for (const item of response.data.data.items) {
+      let imgPath = "";
+      if(item.fields['请上传头像'].length > 0) {
+        config = {
+          method: 'GET',
+          url: item.fields['请上传头像'][0].url,
+          responseType: 'stream',
+          headers: {
+            'Authorization': `Bearer ${feishuToken}`
+          }
+        };
+        
+        try {
+          let response = await axios(config);
+          if (response.status === 200) {
+              const contentDisposition = response.headers['content-disposition'];
+              let filename = contentDisposition ? contentDisposition.split('filename=')[1] : 'image';
+              filename = filename.replace(/["']/g, ""); // 移除可能的引号
+              const ext = path.extname(filename) || '.jpg'; // 获取文件扩展名，或默认为 .jpg
 
-    // console.log(outData);
+              // 设置输出文件路径
+              imgPath = `/img/thumbnail-${Date.now()}${ext}`;
+              const outputPath = path.join(cwd, 'src/img', `thumbnail-${Date.now()}${ext}`);
+              const writer = fs.createWriteStream(outputPath);
+
+              // 使用 sharp 创建缩略图
+              response.data
+                .pipe(sharp().resize(200, 200)) // 调整为所需的缩略图大小
+                .pipe(writer);
+          }
+        } catch (error) {
+          console.error('Error downloading and creating thumbnail:', error);
+          throw error;
+        }
+      }
+      // console.log("image path is " + imgPath);
+      outData.push([
+        item.fields.编号,
+        item.fields.提交人.name,
+        '数据驱动中心',
+        imgPath,
+        // item.fields.提交人.avatar_url,
+        item.fields['请写下你的新年口号（20字以内）']
+      ]);
+    };
+
   } catch (error) {
     console.log(error);
   }
 
+  // console.log(outData);
   return outData;
 }
 
