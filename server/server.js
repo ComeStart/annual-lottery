@@ -6,7 +6,7 @@ const chokidar = require("chokidar");
 const cfg = require("./config");
 const axios = require('axios');
 const fs = require('fs');
-const sharp = require('sharp');
+const Jimp = require('jimp');
 
 
 const {
@@ -302,19 +302,30 @@ async function loadFeishu() {
           let response = await axios(config);
           if (response.status === 200) {
               const contentDisposition = response.headers['content-disposition'];
-              let filename = contentDisposition ? contentDisposition.split('filename=')[1] : 'image';
+              let filename = contentDisposition ? contentDisposition.split(";")[1].split('filename=')[1] : 'image';
               filename = filename.replace(/["']/g, ""); // 移除可能的引号
               const ext = path.extname(filename) || '.jpg'; // 获取文件扩展名，或默认为 .jpg
 
               // 设置输出文件路径
+              const originImagePath = path.join(cwd, "/img/",filename);
+              console.log("originImagePath is " + originImagePath);
               imgPath = `/img/thumbnail-${Date.now()}${ext}`;
-              const outputPath = path.join(cwd, 'img', `thumbnail-${Date.now()}${ext}`);
-              const writer = fs.createWriteStream(outputPath);
+              const thumbnailPath = path.join(cwd, imgPath);
+              console.log("thumbnailPath is " + thumbnailPath);
 
-              // 使用 sharp 创建缩略图
-              response.data
-                .pipe(sharp().resize(200, 200)) // 调整为所需的缩略图大小
-                .pipe(writer);
+              response.data.pipe(fs.createWriteStream(originImagePath)).on('finish', () => {
+                Jimp.read(originImagePath)
+                  .then(image => {
+                    image.resize(200, 200) // 调整为所需的缩略图大小
+                      .quality(90) // 设置图片质量
+                      .write(thumbnailPath); // 保存缩略图
+                  }).then(() => {
+                    // 从这里继续处理或返回结果
+                  })
+                  .catch(err => {
+                    console.error(err);
+                  });
+              });
           }
         } catch (error) {
           console.error('Error downloading and creating thumbnail:', error);
