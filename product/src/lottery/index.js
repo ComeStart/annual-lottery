@@ -58,7 +58,62 @@ let selectedCardIndex = [],
   isLotting = false,
   currentLuckys = [];
 
-initAll();
+const loginBox = document.getElementsByClassName("login-container")[0];
+const submitBtn = document.getElementsByClassName("submit-btn")[0];
+const account = document.getElementById("account_value");
+const password = document.getElementById("password_value");
+
+function showLogin() {
+  loginBox.classList.add('show');
+}
+function hideLogin() {
+  loginBox.classList.add('hidden');
+}
+
+function userLogin(params, showMessage) {
+  window.AJAX({
+    url: "/login",
+    data: params,
+    success(res) {
+      if (res.data) {
+        localStorage.setItem("userInfo", JSON.stringify(params));
+        hideLogin();
+        initAll();
+      } else {
+        if (showMessage) {
+          alert(res.type)
+        }
+      }
+    }
+  });
+};
+
+submitBtn.addEventListener(
+  "click",
+  function (e) {
+    if (!account.value) {
+      alert("请输入账号");
+    } else if (!password.value) {
+      alert("请输入密码");
+    } else {
+      userLogin({
+        name: account.value,
+        password: password.value
+      }, true)
+    }
+  },
+  false
+);
+
+(async () => {
+  let userInfo = undefined;
+  if (localStorage.getItem("userInfo") !== "null" && localStorage.getItem("userInfo") !== "undefined") {
+    userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  }
+  if (userInfo && userInfo.name) {
+    userLogin(userInfo, false);
+  }
+})();
 
 function is_valid_image(url) {
   return new Promise(function(resolve, reject) {
@@ -910,8 +965,8 @@ window.onload = function () {
     },
     false
   );
-
-  setTimeout(function () {
-    musicBox.click();
-  }, 1000);
+  // 取消音乐自动播放
+  // setTimeout(function () {
+  //   musicBox.click();
+  // }, 1000);
 };

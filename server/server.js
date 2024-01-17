@@ -103,7 +103,6 @@ router.post("/reset", (req, res, next) => {
   log(`重置数据成功`);
   saveErrorDataFile(errorData);
   return saveDataFile(luckyData).then(data => {
-    loadData();
     res.json({
       type: "success"
     });
@@ -235,6 +234,7 @@ function loadData() {
   loadFeishu().then(outData => {
     // 处理 outData
     curData.users = outData;
+    // console.log("The total users data is " + outData);
     // 重新洗牌
     shuffle(curData.users);
   
@@ -242,6 +242,7 @@ function loadData() {
     loadTempData()
       .then(data => {
         luckyData = data[0];
+        // console.log("The loaded lucky data is " + JSON.stringify(luckyData));
         errorData = data[1];
       })
       .catch(data => {

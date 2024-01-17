@@ -21,12 +21,12 @@ a {
 #container {
   z-index: 3;
   position: relative;
-  margin: 0 15vh 0 0;
+  margin: 0 15vh;
 }
 
 #menu {
   z-index: 4;
-  /* margin-left: 15vh; */
+  margin-left: 15vh;
 }
 
 .canvas-box {
@@ -63,7 +63,7 @@ a {
   border-radius: 1vh;
   text-align: center;
   cursor: default;
-  transition: background-color 0.3s ease-in;
+  /* transition: background-color 0.3s ease-in; */
 }
 
 .element:hover {
@@ -158,8 +158,8 @@ button:active {
 }
 
 .prize.element {
-  transition: background-color 1.5s ease-in 0.3s;
-  background-color: rgba(253, 105, 0, 0.85) !important;
+  /* transition: background-color 1.5s ease-in 0.3s; */
+  background-color: rgba(230, 99, 50, 0.90) !important;
   /* box-shadow: 0 0 12px rgba(253, 105, 0, 0.95); */
 }
 
@@ -169,7 +169,7 @@ button:active {
 .highlight .company,
 .highlight .name,
 .highlight .details {
-  color: rgba(255, 255, 255, 0.85);
+  color: #ffffff;
 }
 
 .dan-mu {
@@ -216,10 +216,12 @@ button:active {
   justify-content: center;
   border-radius: 4px;
   flex-wrap: nowrap;
-  background-color: rgba(0, 127, 127, 0.37);
-  border: 1px solid rgba(127, 255, 255, 0.25);
+  /* background-color: rgba(0, 127, 127, 0.37);
+  border: 1px solid rgba(127, 255, 255, 0.25); */
+  background-color: rgba(66, 71, 72, 0.20);;
+  border: 2px solid #424748;
   border-radius: 1.4vh;
-  color: rgba(127, 255, 255, 0.75);
+  /* color: rgba(127, 255, 255, 0.75); */
   width: 30vh;
   height: 10vh;
   box-sizing: border-box;
@@ -251,7 +253,15 @@ button:active {
 
 .prize-title {
   margin: 4px 0;
-  font-size: 1.8vh;
+  /* font-size: 1.8vh; */
+  font-size: 1.6vh;
+  color: #ffffff;
+}
+
+.prize-desc {
+  margin: 4px 0;
+  font-size: 1.4vh;
+  color: rgba(207, 207, 207, 0.80);
 }
 
 .prize-count {
@@ -271,8 +281,10 @@ button:active {
   border-radius: 1.8vh;
   position: relative;
   animation: animate-positive 2s;
-  background-color: #d9534f;
-  height: 1.8vh;
+  /* background-color: #d9534f;
+  height: 1.8vh; */
+  background-color: #0D9E82;
+  height: 1.4vh;
   -webkit-transition: width 0.6s ease;
   -o-transition: width 0.6s ease;
   transition: width 0.6s ease;
@@ -358,8 +370,10 @@ button:active {
   position: absolute;
   color: #fff;
   right: 9px;
-  font-size: 1.8vh;
-  line-height: 1.6vh;
+  /* font-size: 1.8vh;
+  line-height: 1.6vh; */
+  font-size: 1vh;
+  line-height: 1vh;
   top: 50%;
   transform: translateY(-50%);
 }
@@ -593,4 +607,48 @@ button:active {
     transform: scale(0.9);
     opacity: 0.8;
   }
+}
+
+
+.login-container {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #E66332;
+  z-index: 9999999;
+}
+.login-form {
+  margin-top: 40vh;
+  margin-left: calc(50vw - 15vh);
+  width: 30vh;
+  height: 20vh;
+}
+.form-item {
+  display: flex;
+  margin: 1vh 0;
+}
+.form-item-label {
+  min-width: 40px;
+}
+.form-item-content {
+  flex: 1;
+}
+.form-inp {
+  outline: none;
+}
+.submit-btn {
+  width: 8vh;
+  text-align: center;
+  background: rgb(168, 186, 212);
+  margin-left: 40px;
+  min-width: 60px;
+  cursor: pointer;
+}
+.show {
+  display: block;
+}
+.hidden {
+  display: none;
 }
