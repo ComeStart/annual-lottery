@@ -307,7 +307,7 @@ async function loadFeishu() {
 
               // 设置输出文件路径
               imgPath = `/img/thumbnail-${Date.now()}${ext}`;
-              const outputPath = path.join(cwd, 'src/img', `thumbnail-${Date.now()}${ext}`);
+              const outputPath = path.join(cwd, 'img', `thumbnail-${Date.now()}${ext}`);
               const writer = fs.createWriteStream(outputPath);
 
               // 使用 sharp 创建缩略图
