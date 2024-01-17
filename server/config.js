@@ -105,7 +105,7 @@ const prizes = [
  * 一次抽取的奖品个数与prizes对应
  */
 // const EACH_COUNT = [1, 1, 5, 6, 7, 8, 9, 10];
-const EACH_COUNT = [1, 1, 2, [6, 6, 3, 3], 1];
+const EACH_COUNT = [1, 1, 2, [6, 6, 3, 3], 5];
 
 
 /**
